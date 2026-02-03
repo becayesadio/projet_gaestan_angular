@@ -1,5 +1,3 @@
-[![Catalyseur Angular](assets/catalyseur-angular-banner.png)](https://pim.ms/64hypvI)
-
 # Prompt Hub — Backend
 
 API REST (NestJS) pour **Prompt Hub**. Sert de backend réaliste pour apprendre Angular moderne dans un contexte proche de l’entreprise (auth, CRUD, JWT, CORS).
