@@ -1,110 +1,28 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+[![Catalyseur Angular](assets/catalyseur-angular-banner.png)](https://pim.ms/64hypvI)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Prompt Hub — Backend
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API REST (NestJS) pour **Prompt Hub**. Sert de backend réaliste pour apprendre Angular moderne dans un contexte proche de l’entreprise (auth, CRUD, JWT, CORS).
 
-## Description
+- **Port** : 3000
+- **Données** : fichier JSON local (`data/db.json`)
 
-Backend API for **Prompt Hub**. REST API on port 3000; data is stored in a local JSON file (`data/db.json`). Used by the Angular app (prompt-hub-frontend) on `http://localhost:4200`.
+## Modes auth (tutoriel)
 
-**Endpoints:** `GET/POST/PATCH /prompts`, `GET /prompts/:id` (with `category` populated), `POST /prompts/:id/upvote`, `POST /prompts/:id/downvote`, `GET /categories`.
+| Commande | Mode |
+|----------|------|
+| `npm run start` / `npm run start:dev` | Sans auth : créer / modifier / voter sans connexion (utilisateur « Système ») |
+| `npm run start:auth` / `npm run start:auth:dev` | Avec auth : JWT requis pour créer, modifier, voter |
 
-**Data:** If `data/db.json` is missing, it is created empty on first run. You can seed it with categories and prompts as needed.
-
-**Auth modes (tutorial):**
-- `npm run start` / `npm run start:dev` — **no auth**: create, update, upvote, downvote work without login (system user). Use for the first part of the tutorial.
-- `npm run start:auth` / `npm run start:auth:dev` — **auth enabled**: JWT required for create/update/vote; login/register required.
-
-**Development:** Run the backend (port 3000) and the Angular app (port 4200) together:
-- From this folder: `npm run start` or `npm run start:dev` (no auth), or `npm run start:auth` / `npm run start:auth:dev` (with auth)
-- From prompt-hub-frontend: `npm start`
-
-## Project setup
+## Lancer le projet
 
 ```bash
-$ npm install
+npm install
+npm run start          # sans auth
+# ou
+npm run start:auth     # avec auth
 ```
 
-## Compile and run the project
+Le frontend Angular (port 4200) consomme cette API ; lancer les deux pour développer.
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+**Frontend :** [prompt-hub-frontend](https://github.com/GaetanRouzies/prompt-hub-frontend)
