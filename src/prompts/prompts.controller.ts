@@ -20,7 +20,7 @@ import {
 import type { Request as ExpressRequest } from 'express';
 import { StorageService } from '../storage/storage.service';
 import { AuthService } from '../auth/auth.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PromptAuthGuard } from '../auth/prompt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { CreatePromptDto } from './dto/create-prompt.dto';
 import { UpdatePromptDto } from './dto/update-prompt.dto';
@@ -48,6 +48,8 @@ function buildPromptDto(
   const vote = currentUserId
     ? storage.getVote(db, prompt.id, currentUserId)
     : undefined;
+  // userVote is always set: null when not connected or when user has not voted
+  const userVote: 'up' | 'down' | null = vote?.type ?? null;
   return {
     id: prompt.id,
     title: prompt.title,
@@ -58,7 +60,7 @@ function buildPromptDto(
     author: authorEntity
       ? { id: authorEntity.id, username: authorEntity.username }
       : { id: prompt.userId, username: '' },
-    userVote: vote ? vote.type : null,
+    userVote,
   };
 }
 
@@ -98,10 +100,10 @@ export class PromptsController {
     return buildPromptDto(prompt, db, this.storage, currentUser?.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(PromptAuthGuard)
   @Post()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a prompt (auth required)' })
+  @ApiOperation({ summary: 'Create a prompt (auth required when AUTH_ENABLED=true)' })
   @ApiResponse({ status: 201, description: 'Prompt created' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   create(
@@ -124,10 +126,10 @@ export class PromptsController {
     return buildPromptDto(prompt, db, this.storage, user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(PromptAuthGuard)
   @Patch(':id')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update a prompt (author only)' })
+  @ApiOperation({ summary: 'Update a prompt (author only when AUTH_ENABLED=true)' })
   @ApiResponse({ status: 200, description: 'Prompt updated' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Not the author' })
@@ -140,18 +142,22 @@ export class PromptsController {
     const db = this.storage.getDb();
     const prompt = this.storage.getPromptById(db, id);
     if (!prompt) throw new NotFoundException('Prompt not found');
-    if (prompt.userId !== user.id) throw new ForbiddenException('Not the author');
-    if (dto.title !== undefined) prompt.title = dto.title;
-    if (dto.content !== undefined) prompt.content = dto.content;
-    if (dto.categoryId !== undefined) prompt.categoryId = dto.categoryId;
+    // System user (id 1) can edit any prompt when auth is disabled
+    const isSystemUser = user.id === 1;
+    if (!isSystemUser && prompt.userId !== user.id) {
+      throw new ForbiddenException('Not the author');
+    }
+    prompt.title = dto.title;
+    prompt.content = dto.content;
+    prompt.categoryId = dto.categoryId;
     this.storage.saveDb(db);
     return buildPromptDto(prompt, db, this.storage, user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(PromptAuthGuard)
   @Post(':id/upvote')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Upvote a prompt (auth required)' })
+  @ApiOperation({ summary: 'Upvote a prompt (auth required when AUTH_ENABLED=true)' })
   @ApiResponse({ status: 200, description: 'Prompt with updated score' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Prompt not found' })
@@ -162,10 +168,10 @@ export class PromptsController {
     return this.applyVote(id, user.id, 'up');
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(PromptAuthGuard)
   @Post(':id/downvote')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Downvote a prompt (auth required)' })
+  @ApiOperation({ summary: 'Downvote a prompt (auth required when AUTH_ENABLED=true)' })
   @ApiResponse({ status: 200, description: 'Prompt with updated score' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Prompt not found' })

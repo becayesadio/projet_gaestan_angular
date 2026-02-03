@@ -29,8 +29,12 @@ Backend API for **Prompt Hub**. REST API on port 3000; data is stored in a local
 
 **Data:** If `data/db.json` is missing, it is created empty on first run. You can seed it with categories and prompts as needed.
 
+**Auth modes (tutorial):**
+- `npm run start` / `npm run start:dev` — **no auth**: create, update, upvote, downvote work without login (system user). Use for the first part of the tutorial.
+- `npm run start:auth` / `npm run start:auth:dev` — **auth enabled**: JWT required for create/update/vote; login/register required.
+
 **Development:** Run the backend (port 3000) and the Angular app (port 4200) together:
-- From this folder: `npm run start` or `npm run start:dev`
+- From this folder: `npm run start` or `npm run start:dev` (no auth), or `npm run start:auth` / `npm run start:auth:dev` (with auth)
 - From prompt-hub-frontend: `npm start`
 
 ## Project setup
