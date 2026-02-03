@@ -13,7 +13,10 @@ export interface JwtPayload {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly storage: StorageService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => req?.cookies?.token ?? null,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET ?? 'prompt-hub-dev-secret-change-in-prod',
     });

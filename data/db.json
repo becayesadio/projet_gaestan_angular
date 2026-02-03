@@ -59,7 +59,7 @@
       "content": "Crée une image avec :\n\n- un sujet principal bien défini\n- un style artistique cohérent (ex. aquarelle, pixel art, photoréaliste)\n- une composition équilibrée\n- des couleurs harmonieuses\n\nÉviter le texte dans l'image.",
       "categoryId": 1,
       "userId": 3,
-      "score": 0,
+      "score": 1,
       "createdAt": "2025-01-28T11:00:00.000Z"
     },
     {
@@ -77,9 +77,20 @@
       "content": "Voici mon prompt",
       "categoryId": 1,
       "userId": 2,
-      "score": 0,
+      "score": -1,
       "createdAt": "2026-02-02T10:16:32.907Z"
     }
   ],
-  "votes": []
+  "votes": [
+    {
+      "promptId": 4,
+      "userId": 2,
+      "type": "up"
+    },
+    {
+      "promptId": 6,
+      "userId": 2,
+      "type": "down"
+    }
+  ]
 }

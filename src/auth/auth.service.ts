@@ -13,7 +13,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(username: string, password: string): Promise<{ access_token: string }> {
+  async register(
+    username: string,
+    password: string,
+  ): Promise<{ access_token: string; user: { id: number; username: string } }> {
     const db = this.storage.getDb();
     const existing = this.storage.getUserByUsername(db, username);
     if (existing) {
@@ -34,13 +37,17 @@ export class AuthService {
     return ok ? user : null;
   }
 
-  login(user: UserEntity): { access_token: string } {
+  /** Returns token and user for cookie-based auth. */
+  login(user: UserEntity): { access_token: string; user: { id: number; username: string } } {
     const payload = { sub: user.id, username: user.username };
     const access_token = this.jwtService.sign(payload);
-    return { access_token };
+    return { access_token, user: { id: user.id, username: user.username } };
   }
 
-  async loginWithCredentials(username: string, password: string): Promise<{ access_token: string }> {
+  async loginWithCredentials(
+    username: string,
+    password: string,
+  ): Promise<{ access_token: string; user: { id: number; username: string } }> {
     const user = await this.validateUser(username, password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -48,11 +55,12 @@ export class AuthService {
     return this.login(user);
   }
 
-  /** Returns current user if valid JWT in request; otherwise null (for optional auth on GET). */
+  /** Returns current user if valid JWT in request (cookie or header); otherwise null. */
   getOptionalUserFromRequest(req: Request): UserEntity | null {
-    const auth = req.headers.authorization;
-    if (!auth?.startsWith('Bearer ')) return null;
-    const token = auth.slice(7);
+    const token =
+      (req as Request & { cookies?: { token?: string } }).cookies?.token ??
+      (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.slice(7) : null);
+    if (!token) return null;
     try {
       const payload = this.jwtService.verify<JwtPayload>(token);
       const db = this.storage.getDb();
