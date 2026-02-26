@@ -130,4 +130,10 @@ export class StorageService {
     );
     if (index !== -1) db.votes.splice(index, 1);
   }
+
+  /** Remove a prompt and all its votes. */
+  deletePrompt(db: DbSchema, promptId: number): void {
+    db.prompts = db.prompts.filter((p) => p.id !== promptId);
+    db.votes = db.votes.filter((v) => v.promptId !== promptId);
+  }
 }

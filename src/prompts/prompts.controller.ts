@@ -1,8 +1,9 @@
 import {
   Controller,
+  Delete,
   Get,
   Post,
-  Patch,
+  Put,
   Body,
   Param,
   ParseIntPipe,
@@ -10,6 +11,8 @@ import {
   ForbiddenException,
   UseGuards,
   Req,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -127,7 +130,7 @@ export class PromptsController {
   }
 
   @UseGuards(PromptAuthGuard)
-  @Patch(':id')
+  @Put(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a prompt (author only when AUTH_ENABLED=true)' })
   @ApiResponse({ status: 200, description: 'Prompt updated' })
@@ -152,6 +155,30 @@ export class PromptsController {
     prompt.categoryId = dto.categoryId;
     this.storage.saveDb(db);
     return buildPromptDto(prompt, db, this.storage, user.id);
+  }
+
+  @UseGuards(PromptAuthGuard)
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a prompt (author only when AUTH_ENABLED=true)' })
+  @ApiResponse({ status: 204, description: 'Prompt deleted' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Not the author' })
+  @ApiResponse({ status: 404, description: 'Prompt not found' })
+  delete(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: UserEntity,
+  ): void {
+    const db = this.storage.getDb();
+    const prompt = this.storage.getPromptById(db, id);
+    if (!prompt) throw new NotFoundException('Prompt not found');
+    const isSystemUser = user.id === 1;
+    if (!isSystemUser && prompt.userId !== user.id) {
+      throw new ForbiddenException('Not the author');
+    }
+    this.storage.deletePrompt(db, id);
+    this.storage.saveDb(db);
   }
 
   @UseGuards(PromptAuthGuard)
